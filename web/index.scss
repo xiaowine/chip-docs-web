@@ -1,4 +1,6 @@
 @use "@theme/theme.scss" as *;
+
+/* 基础布局 */
 .app-container {
   min-height: 100vh;
   background-color: var(--w-bg-color);
@@ -8,7 +10,6 @@
 }
 
 .main-content {
-  padding-top: var(--w-topbar-height, 60px);
   flex: 1;
 }
 
@@ -22,31 +23,50 @@
   }
 }
 
-.file-detail-item {
-  margin-bottom: 10px;
-  padding: 8px;
-  border-bottom: 1px solid var(--w-border-color-light);
+/* 内容布局 */
+.content-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  min-height: calc(100vh - 120px);
+  margin-top: 45px;
+  padding: 20px;
 
-  &:last-child {
-    border-bottom: none;
+  .file-tree-container {
+    flex: 0 0 300px;
+    min-width: 250px;
+    height: 100%;
+  }
+
+  .markdown-container {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
   }
 }
 
-.file-detail-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 120px;
-  color: var(--w-text-color-secondary);
+/* 文件详情样式 */
+.file-detail {
+  &-item {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-bottom: 1px solid var(--w-border-color-light);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+    color: var(--w-text-color-secondary);
+  }
 }
 
-.file-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  padding: 0px 10px;
-}
-
+/* 操作按钮通用样式 */
 .action-button {
   display: inline-flex;
   align-items: center;
@@ -87,6 +107,7 @@
   }
 }
 
+/* 按钮样式变体 */
 .download-btn {
   background-color: var(--w-primary-color);
   color: white;
@@ -125,62 +146,8 @@
   }
 }
 
-// 下载进度相关样式
-.download-progress {
-  padding: 10px;
-}
-
-.download-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.download-filename {
-  font-weight: 500;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 70%;
-}
-
-.download-percent {
-  font-weight: 600;
-  margin: 0;
-  color: var(--w-primary-color);
-}
-
-.progress-bar-container {
-  width: 100%;
-  height: 10px;
-  background-color: var(--w-bg-color-secondary, #f5f5f5);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-.progress-bar {
-  height: 100%;
-  background-color: var(--w-primary-color);
-  border-radius: 10px;
-  transition: width 0.3s ease;
-}
-
-.download-status {
-  text-align: center;
-  color: var(--w-text-color-secondary);
-  margin: 10px 0;
-}
-
-.download-actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-}
-
-.done-btn {
+.done-btn,
+.cancel-btn {
   background-color: var(--w-primary-color);
   color: white;
   padding: 8px 24px;
@@ -193,5 +160,92 @@
   &:active {
     background-color: var(--w-primary-color-active, #0a5dc2);
     transform: translateY(1px);
+  }
+}
+
+/* 操作区域布局 */
+.file-actions,
+.download-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 0 10px;
+  gap: 10px;
+}
+
+/* 下载进度样式 */
+.download {
+  &-progress {
+    padding: 10px;
+  }
+
+  &-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  &-filename {
+    font-weight: 500;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+  }
+
+  &-percent {
+    font-weight: 600;
+    margin: 0;
+    color: var(--w-primary-color);
+  }
+
+  &-status {
+    text-align: center;
+    color: var(--w-text-color-secondary);
+    margin: 10px 0;
+  }
+}
+
+.progress-bar {
+  &-container {
+    width: 100%;
+    height: 10px;
+    background-color: var(--w-bg-color-secondary, #f5f5f5);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  height: 100%;
+  background-color: var(--w-primary-color);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .content-layout {
+    flex-direction: column;
+
+    .file-tree-container {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+
+    .markdown-container {
+      margin-top: 10px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .content-layout {
+    padding: 10px;
   }
 }
