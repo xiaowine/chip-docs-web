@@ -23,7 +23,7 @@
       "@@/*": ["wine-ui/components/*"],
       "@assets/*": ["wine-ui/assets/*"],
       "@utils/*": ["wine-ui/utils/*"],
-      "@example/*": ["example/*"],
+      "@web/*": ["web/*"],
       "packages/*": ["wine-ui/components/*"],
       "wine-ui": ["wine-ui/index.ts"]
     },
@@ -37,8 +37,8 @@
     "wine-ui/**/*.ts",
     "wine-ui/**/*.tsx",
     "wine-ui/**/*.vue",
-    "example/**/*.ts",
-    "example/**/*.tsx",
-    "example/**/*.vue"
+    "web/**/*.ts",
+    "web/**/*.tsx",
+    "web/**/*.vue"
   ]
 }

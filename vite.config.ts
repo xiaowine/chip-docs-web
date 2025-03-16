@@ -5,13 +5,13 @@ import { resolve } from "path";
 export default defineConfig({
   base: process.env.NODE_ENV === "production" ? "./" : "/",
   plugins: [vue()],
-  root: "example",
-  publicDir: resolve(__dirname, "example/public"),
+  root: "web",
+  publicDir: resolve(__dirname, "web/public"),
   resolve: {
     alias: {
       "@": resolve(__dirname, "wine-ui"),
       "@components": resolve(__dirname, "wine-ui/components"),
-      "@example": resolve(__dirname, "example"),
+      "@web": resolve(__dirname, "web"),
       "wine-ui": resolve(__dirname, "wine-ui"),
       "@theme": resolve(__dirname, "wine-ui/styles"),
     },
@@ -21,7 +21,7 @@ export default defineConfig({
     assetsDir: "assets",
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "example/index.html"),
+        main: resolve(__dirname, "web/index.html"),
       },
       output: {
         assetFileNames: "assets/[name].[hash][extname]", // 自定义静态资源输出名

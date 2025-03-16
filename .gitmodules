@@ -1,0 +1,3 @@
+[submodule "chip-docs"]
+	path = chip-docs
+	url = https://github.com/xiaowine/chip-docs.git
