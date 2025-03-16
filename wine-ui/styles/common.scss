@@ -1,0 +1,29 @@
+.shadow-box {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, var(--w-shadow-opacity-base)),
+    0 4px 12px 0 rgba(0, 0, 0, calc(var(--w-shadow-opacity-base) * 0.8)),
+    0 8px 24px 0 rgba(0, 0, 0, calc(var(--w-shadow-opacity-base) * 0.6));
+}
+
+.custom-scrollbar {
+  scroll-behavior: smooth;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--w-scrollbar-track-color);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--w-scrollbar-thumb-color);
+    border-radius: 10px;
+
+    &:hover {
+      background: var(--w-scrollbar-thumb-hover-color);
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["wine-ui/*"],
+      "@components/*": ["wine-ui/components/*"],
+      "@@/*": ["wine-ui/components/*"],
+      "@assets/*": ["wine-ui/assets/*"],
+      "@utils/*": ["wine-ui/utils/*"],
+      "@example/*": ["example/*"],
+      "packages/*": ["wine-ui/components/*"],
+      "wine-ui": ["wine-ui/index.ts"]
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["vite/client", "node", "vue"],
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "composite": true
+  },
+  "include": [
+    "wine-ui/**/*.ts",
+    "wine-ui/**/*.tsx",
+    "wine-ui/**/*.vue",
+    "example/**/*.ts",
+    "example/**/*.tsx",
+    "example/**/*.vue"
+  ]
+}

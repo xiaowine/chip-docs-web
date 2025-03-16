@@ -1,0 +1,197 @@
+@use "@/styles/theme.scss";
+
+// Mixins
+@mixin mobile {
+  @media screen and (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+}
+
+@mixin transition($properties...) {
+  transition-property: $properties;
+  transition-duration: 0.25s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.w- {
+  &title {
+    padding-left: 10px;
+  }
+  // Base Topbar
+  &topbar {
+    width: 100%;
+    height: var(--w-topbar-height);
+    background: var(--w-topbar-background);
+    box-shadow: var(--w-topbar-shadow);
+
+    &-fixed {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: var(--w-topbar-z-index);
+    }
+
+    &-content {
+      @include flex-center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    &-left,
+    &-center,
+    &-right {
+      @include flex-center;
+    }
+
+    &-center {
+      flex: 1;
+      justify-content: center;
+    }
+
+    &-right {
+      gap: 20px;
+    }
+  }
+  &logo {
+    @include flex-center;
+    height: calc(var(--w-topbar-height) * 0.667);
+
+    img {
+      height: 100%;
+      max-height: 40px;
+    }
+
+    @each $position in (left, center, right) {
+      &-#{$position} {
+        margin-#{if($position == left, right, if($position == right, left, 0))}: var(
+          --w-nav-gap
+        );
+
+        @if $position == center {
+          margin: 0 var(--w-nav-gap);
+          @include mobile {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+  &nav {
+    &-menu {
+      @include flex-center;
+      gap: var(--w-nav-gap, 30px);
+
+      @include mobile {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--w-bg-color);
+        box-shadow: var(--w-shadow);
+        padding: var(--w-nav-container-padding) 0;
+        transform-origin: top center;
+        transform: scaleY(0);
+        opacity: 0;
+        pointer-events: none;
+        @include transition(transform, opacity);
+        z-index: var(--w-topbar-z-index);
+        flex-direction: column;
+        gap: 0;
+
+        &.w-nav-menu-active {
+          transform: scaleY(1);
+          opacity: 1;
+          pointer-events: auto;
+        }
+      }
+    }
+
+    &-menu-content {
+      border-bottom: 1px solid var(--w-border-color);
+      &:last-child {
+        border-bottom: none;
+      }
+      @include mobile {
+        width: 100%;
+        padding: var(--w-nav-item-gap-mobile) 0;
+      }
+    }
+
+    &-item {
+      color: var(--w-text-color);
+      text-decoration: none;
+      font-size: 16px;
+      @include transition(color);
+      white-space: nowrap;
+
+      &:hover,
+      &.w-nav-link-active {
+        color: var(--w-primary-color);
+      }
+
+      &.w-nav-link-active {
+        font-weight: 500;
+      }
+
+      @include mobile {
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+  &menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+
+    span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--w-text-color);
+      @include transition(transform, opacity);
+    }
+
+    &.is-active span {
+      &:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+      }
+      &:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+      &:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+      }
+    }
+
+    @include mobile {
+      display: flex;
+    }
+  }
+  &nav-overlay {
+    position: fixed;
+    top: var(--w-topbar-height, 60px);
+    inset: var(--w-topbar-height, 60px) 0 0 0;
+    background-color: var(--w-overlay-color);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    @include transition(opacity);
+    z-index: calc(var(--w-topbar-z-index) - 1);
+
+    &-active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}

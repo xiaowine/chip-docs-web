@@ -1,0 +1,131 @@
+.w-dialog {
+  background-color: var(--w-bg-color);
+  border-radius: var(--w-border-radius);
+  box-shadow: var(--w-shadow);
+  max-width: 90%;
+  max-height: 80%;
+  overflow: hidden;
+  min-width: 300px;
+  &-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+  }
+  &-header {
+    padding: 20px 20px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--w-text-color);
+
+    &--center {
+      text-align: center;
+      flex-grow: 1;
+    }
+  }
+
+  &-close {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 20px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--w-text-color-secondary);
+    border-radius: 50%;
+
+    &:hover {
+      background-color: var(--w-bg-color-hover);
+      color: var(--w-text-color);
+    }
+  }
+
+  &-body {
+    padding: 20px;
+    color: var(--w-text-color);
+    max-height: 55vh;
+    overflow-y: auto;
+
+    &--center {
+      text-align: center;
+    }
+  }
+
+  &-footer {
+    padding: 10px 20px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  &-button {
+    padding: 10px 18px;
+    border-radius: var(--w-button-border-radius);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  &-cancel {
+    background-color: transparent;
+    color: var(--w-text-color-secondary);
+    border: 1px solid var(--w-border-color);
+
+    &:hover {
+      background-color: var(--w-bg-color-hover);
+    }
+  }
+
+  &-confirm {
+    background-color: var(--w-primary-color);
+    color: #fff;
+    border: none;
+
+    &:hover {
+      background-color: var(--w-primary-color-hover);
+    }
+
+    &:active {
+      background-color: var(--w-primary-color-active);
+    }
+  }
+}
+
+// 过渡动画
+.w-dialog-fade-enter-active,
+.w-dialog-fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.w-dialog-fade-enter-from,
+.w-dialog-fade-leave-to {
+  opacity: 0;
+}
+
+.w-dialog-fade-enter-active .w-dialog,
+.w-dialog-fade-leave-active .w-dialog {
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.w-dialog-fade-enter-from .w-dialog,
+.w-dialog-fade-leave-to .w-dialog {
+  transform: translateY(-30px);
+  opacity: 0;
+}

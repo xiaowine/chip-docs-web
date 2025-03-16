@@ -1,0 +1,36 @@
+@use "@theme/theme.scss" as *;
+.theme-transition {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  visibility: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 300vmax;
+    height: 300vmax;
+    background-color: var(--next-theme-color);
+    transform-origin: center;
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    @include mobile {
+      transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+  }
+
+  &--active {
+    visibility: visible;
+
+    &::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+}

@@ -1,0 +1,144 @@
+@use "sass:map";
+@use "./common.scss";
+
+// 定义主题色值映射
+$themes: (
+  light: (
+    primary: (
+      base: #1890ff,
+      hover: #40a9ff,
+      active: #096dd9,
+    ),
+    text: (
+      base: #333333,
+      secondary: #666666,
+      disabled: #999999,
+    ),
+    background: (
+      base: #ffffff,
+      hover: #f5f5f5,
+    ),
+    border: #eeeeee,
+    shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
+    scrollbar: (
+      track: rgba(0, 0, 0, 0.05),
+      thumb: #40a9ff7d,
+      thumb-hover: #40a9ff,
+    ),
+  ),
+  dark: (
+    primary: (
+      base: #4d9eff,
+      hover: #66acff,
+      active: #2d7eeb,
+    ),
+    text: (
+      base: #f0f0f0,
+      secondary: #bfbfbf,
+      disabled: #808080,
+    ),
+    background: (
+      base: #282828,
+      hover: #2c2c2c,
+      secondary: #242424,
+    ),
+    border: #383838,
+    shadow: 0 4px 12px rgba(0, 0, 0, 0.5),
+    scrollbar: (
+      thumb: #1a1a1a,
+      track: #2e2e2e,
+      thumb-hover: #4b4949,
+    ),
+  ),
+);
+
+// 主题生成mixin
+@mixin generate-theme($theme-name) {
+  $theme-map: map.get($themes, $theme-name);
+
+  @if $theme-name == "light" {
+    :root {
+      @include set-theme-variables($theme-map);
+    }
+  } @else {
+    [data-theme="#{$theme-name}"] {
+      @include set-theme-variables($theme-map);
+    }
+  }
+}
+
+// 设置主题变量mixin
+@mixin set-theme-variables($theme-map) {
+  --w-primary-color: #{map.get(map.get($theme-map, primary), base)};
+  --w-primary-color-hover: #{map.get(map.get($theme-map, primary), hover)};
+  --w-primary-color-active: #{map.get(map.get($theme-map, primary), active)};
+
+  --w-text-color: #{map.get(map.get($theme-map, text), base)};
+  --w-text-color-secondary: #{map.get(map.get($theme-map, text), secondary)};
+  --w-text-color-disabled: #{map.get(map.get($theme-map, text), disabled)};
+
+  --w-bg-color: #{map.get(map.get($theme-map, background), base)};
+  --w-bg-color-hover: #{map.get(map.get($theme-map, background), hover)};
+  --w-bg-color-secondary: #{map.get(map.get($theme-map, background), secondary)};
+
+  --w-border-color: #{map.get($theme-map, border)};
+  --w-shadow: #{map.get($theme-map, shadow)};
+
+  // 新增滚动条相关变量
+  --w-scrollbar-track-color: #{map.get(map.get($theme-map, scrollbar), track)};
+  --w-scrollbar-thumb-color: #{map.get(map.get($theme-map, scrollbar), thumb)};
+  --w-scrollbar-thumb-hover-color: #{map.get(
+      map.get($theme-map, scrollbar),
+      thumb-hover
+    )};
+}
+
+// 生成主题
+@include generate-theme("light");
+@include generate-theme("dark");
+
+:root {
+  --w-bg-color-light: #{map.get(
+      map.get(map.get($themes, light), background),
+      base
+    )};
+  --w-bg-color-dark: #{map.get(
+      map.get(map.get($themes, dark), background),
+      base
+    )};
+
+  --w-shadow-opacity-base: 0.35;
+  --w-shadow-offset-base: 4px;
+  --w-shadow-blur-base: 8px;
+  --w-shadow-opacity-hover: 0.65;
+  --w-border-radius: 20px;
+  --w-button-border-radius: 10px;
+  --w-topbar-height: 60px;
+  --w-topbar-background: var(--w-bg-color);
+  --w-topbar-z-index: 1000;
+  --w-topbar-shadow: var(--w-shadow);
+  --w-nav-gap: 30px;
+  --w-nav-item-gap-mobile: 18px;
+  --w-nav-container-padding: 1px;
+  --w-bg-color-blur: rgba(255, 255, 255, 0.8);
+  --w-overlay-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] {
+  --w-shadow-opacity-base: 0.25;
+  --w-shadow-opacity-hover: 0.35;
+
+  // 新增背景模糊相关变量
+  --w-bg-color-blur: rgba(28, 28, 28, 0.8);
+  --w-overlay-color: rgba(0, 0, 0, 0.2);
+}
+
+@mixin mobile {
+  @media screen and (max-width: 768px) {
+    @content;
+  }
+}
+
+body {
+  @extend .custom-scrollbar;
+}
