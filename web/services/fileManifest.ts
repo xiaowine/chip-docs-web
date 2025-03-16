@@ -1,3 +1,5 @@
+import { addTimestampToUrl } from "../utils/url";
+
 interface FileManifest {
   timestamp: string;
   files: Record<string, string>;
@@ -10,9 +12,16 @@ interface FileNode {
 
 const BASE_URL = "https://xiaowine.github.io/chip-docs";
 
+/**
+ * 给 URL 添加时间戳参数防止缓存
+ *
+ * @param url 原始URL
+ * @returns 添加时间戳后的URL
+ */
 export async function fetchFileManifest(): Promise<FileNode[]> {
   try {
-    const response = await fetch(`${BASE_URL}/.data/file-manifest.json`);
+    const url = addTimestampToUrl(`${BASE_URL}/.data/file-manifest.json`);
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Failed to fetch file manifest");
     }

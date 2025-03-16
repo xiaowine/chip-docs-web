@@ -2,6 +2,7 @@
  * 文件详情服务
  * 用于获取文件的详细信息
  */
+import { addTimestampToUrl } from "../utils/url";
 
 export interface FileDetail {
   path: string;
@@ -21,7 +22,8 @@ const BASE_URL = "https://xiaowine.github.io/chip-docs";
  */
 export async function getFileDetailByMd5(md5: string): Promise<FileDetail> {
   try {
-    const response = await fetch(`${BASE_URL}/.data/md5s/${md5}.json`);
+    const url = addTimestampToUrl(`${BASE_URL}/.data/md5s/${md5}.json`);
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`获取文件详情失败，状态码: ${response.status}`);
     }
@@ -44,7 +46,7 @@ export async function downloadFile(
   onProgress?: (progress: number) => void,
   signal?: AbortSignal
 ): Promise<void> {
-  const downloadUrl = `${BASE_URL}/${path}`;
+  const downloadUrl = addTimestampToUrl(`${BASE_URL}/${path}`);
   try {
     // 初始进度报告
     onProgress?.(0);
@@ -99,7 +101,8 @@ export async function downloadFile(
  */
 export async function fetchMarkdownContent(url: string): Promise<string> {
   try {
-    const response = await fetch(url);
+    const timestampedUrl = addTimestampToUrl(url);
+    const response = await fetch(timestampedUrl);
     if (!response.ok) {
       throw new Error(`获取Markdown内容失败: ${response.status}`);
     }
