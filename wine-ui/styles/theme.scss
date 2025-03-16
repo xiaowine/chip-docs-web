@@ -131,6 +131,8 @@ $themes: (
   // 新增背景模糊相关变量
   --w-bg-color-blur: rgba(28, 28, 28, 0.8);
   --w-overlay-color: rgba(0, 0, 0, 0.2);
+
+  --w-info-color: #41b883;
 }
 
 @mixin mobile {

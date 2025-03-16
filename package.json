@@ -11,6 +11,7 @@
     "build:web": "vue-tsc -b && vite build --emptyOutDir"
   },
   "dependencies": {
+    "marked": "^15.0.7",
     "vue": "^3.5.13"
   },
   "devDependencies": {

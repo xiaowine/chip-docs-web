@@ -18,20 +18,41 @@
     </Topbar>
     <div class="main-content">
       <div class="container">
-        <RoundCard
-          shadow
-          style="
-            border: 2px solid var(--w-border-color) !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          "
-        >
-          <FileTree
-            :data="fileTreeData"
-            :loading="isFileTreeLoading"
-            @select="handleFileSelect"
-            @toggle="handleFileToggle"
-            @refresh="handleFileRefresh"
-        /></RoundCard>
+        <div class="content-layout">
+          <!-- 左侧文件树 -->
+          <div class="file-tree-container">
+            <RoundCard
+              shadow
+              style="
+                height: 100%;
+                border: 2px solid var(--w-border-color) !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+              "
+            >
+              <FileTree
+                :data="fileTreeData"
+                :loading="isFileTreeLoading"
+                @select="handleFileSelect"
+                @toggle="handleFileToggle"
+                @refresh="handleFileRefresh"
+              />
+            </RoundCard>
+          </div>
+
+          <!-- 右侧Markdown显示 -->
+          <div class="markdown-container">
+            <RoundCard
+              shadow
+              style="
+                height: 100%;
+                border: 2px solid var(--w-border-color) !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+              "
+            >
+              <MarkdownViewer :url="markdownUrl" />
+            </RoundCard>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -95,8 +116,19 @@
         ></div>
       </div>
       <p class="download-status">{{ downloadStatus }}</p>
-      <div v-if="downloadComplete" class="download-actions">
-        <button class="action-button done-btn" @click="closeDownloadDialog">
+      <div class="download-actions">
+        <button
+          v-if="!downloadComplete"
+          class="action-button cancel-btn"
+          @click="cancelDownload"
+        >
+          取消下载
+        </button>
+        <button
+          v-if="downloadComplete"
+          class="action-button done-btn"
+          @click="closeDownloadDialog"
+        >
           完成
         </button>
       </div>
@@ -129,6 +161,7 @@ import {
   downloadFile,
   type FileDetail,
 } from "./services/fileService";
+import MarkdownViewer from "./components/MarkdownViewer/MarkdownViewer.vue";
 
 const isTopbarMenuOpen = ref(false);
 
@@ -217,11 +250,17 @@ const handleFileToggle = (node: TreeNode) => {
   fileTreeData.value = updateNode(fileTreeData.value);
 };
 
+// 添加下载控制器引用
+const currentDownloadController = ref<AbortController | null>(null);
+
 // 处理文件下载
 const handleDownload = (path: string) => {
   downloadingFile.value = path.split("/").pop() || "文件";
   showDownloadDialog.value = true;
   downloadComplete.value = false;
+
+  // 创建新的 AbortController
+  currentDownloadController.value = new AbortController();
 
   const updateProgress = (progress: number) => {
     downloadProgress.value = progress;
@@ -233,10 +272,28 @@ const handleDownload = (path: string) => {
     }
   };
 
-  downloadFile(path, updateProgress).catch((error) => {
-    downloadStatus.value = `下载失败: ${error.message}`;
+  downloadFile(
+    path,
+    updateProgress,
+    currentDownloadController.value.signal
+  ).catch((error) => {
+    // 检查是否是因为取消导致的错误
+    if (error.name === "AbortError") {
+      downloadStatus.value = "下载已取消";
+    } else {
+      downloadStatus.value = `下载失败: ${error.message}`;
+    }
     downloadComplete.value = true;
   });
+};
+
+// 取消下载
+const cancelDownload = () => {
+  if (currentDownloadController.value) {
+    currentDownloadController.value.abort();
+    currentDownloadController.value = null;
+    downloadStatus.value = "正在取消下载...";
+  }
 };
 
 // 添加下载进度相关状态
@@ -254,6 +311,7 @@ const closeDownloadDialog = () => {
   downloadingFile.value = "";
   downloadStatus.value = "准备下载...";
   downloadComplete.value = false;
+  currentDownloadController.value = null;
 };
 
 // 使用防抖包装主题切换函数
@@ -274,8 +332,113 @@ const toggleTheme = debounce(async () => {
 onMounted(() => {
   loadFileManifest();
 });
+
+// Markdown预览相关状态 - 默认加载README文件
+const markdownUrl = ref("https://xiaowine.github.io/chip-docs/README.md");
 </script>
 
 <style lang="scss">
 @use "./index.scss";
+
+// 两栏布局样式
+.content-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  min-height: calc(100vh - 120px);
+  margin-top: 80px;
+  padding: 20px;
+
+  .file-tree-container {
+    flex: 0 0 300px;
+    min-width: 250px;
+    height: 100%;
+  }
+
+  .markdown-container {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+// 响应式布局
+@media (max-width: 768px) {
+  .content-layout {
+    flex-direction: column;
+
+    .file-tree-container {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+
+    .markdown-container {
+      margin-top: 20px;
+    }
+  }
+}
+
+// 添加预览按钮样式
+.file-actions,
+.download-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+
+  .action-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s, opacity 0.3s;
+
+    &.download-btn {
+      background-color: var(--w-primary-color);
+      color: white;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    &.preview-btn {
+      background-color: var(--w-info-color);
+      color: white;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    &.done-btn {
+      background-color: var(--w-primary-color);
+      color: white;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    &.cancel-btn {
+      background-color: var(--w-primary-color);
+      color: white;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+// 移动端适配
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .content-layout {
+    padding: 10px;
+  }
+}
 </style>

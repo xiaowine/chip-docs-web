@@ -37,17 +37,19 @@ export async function getFileDetailByMd5(md5: string): Promise<FileDetail> {
  *
  * @param path 文件路径
  * @param onProgress 下载进度回调函数，参数为 0-100 的数值
+ * @param signal 可选的AbortSignal对象，用于取消下载
  */
 export async function downloadFile(
   path: string,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
+  signal?: AbortSignal
 ): Promise<void> {
   const downloadUrl = `${BASE_URL}/${path}`;
   try {
     // 初始进度报告
     onProgress?.(0);
 
-    const response = await fetch(downloadUrl);
+    const response = await fetch(downloadUrl, { signal });
     if (!response.ok) {
       throw new Error(`下载失败，状态码: ${response.status}`);
     }
@@ -86,6 +88,24 @@ export async function downloadFile(
     window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error("下载文件时出错:", error);
+    throw error;
+  }
+}
+
+/**
+ * 获取Markdown文件内容并预览
+ * @param url Markdown文件的URL
+ * @returns Promise<string> Markdown内容
+ */
+export async function fetchMarkdownContent(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`获取Markdown内容失败: ${response.status}`);
+    }
+    return await response.text();
+  } catch (error) {
+    console.error("获取Markdown失败:", error);
     throw error;
   }
 }
