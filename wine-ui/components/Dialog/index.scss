@@ -61,7 +61,8 @@
     padding: 20px;
     color: var(--w-text-color);
     max-height: 55vh;
-    overflow-y: auto;
+    overflow-y: hidden;
+    overflow-x: hidden;
 
     &--center {
       text-align: center;

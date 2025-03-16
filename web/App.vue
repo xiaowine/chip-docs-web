@@ -8,13 +8,6 @@
       :items="menuItems"
       :shadow="true"
       :fixed="true"
-      @before-open="handleBeforeOpen"
-      @before-close="handleBeforeClose"
-      @opened="handleOpened"
-      @closed="handleClosed"
-      @before-select="handleBeforeSelect"
-      @select="handleSelect"
-      @selected="handleSelected"
     >
       <template #right>
         <ThemeSwitch
@@ -25,88 +18,90 @@
     </Topbar>
     <div class="main-content">
       <div class="container">
-        <h1>Wine UI 组件库示例</h1>
+        <RoundCard
+          shadow
+          style="
+            border: 2px solid var(--w-border-color) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          "
+        >
+          <FileTree
+            :data="fileTreeData"
+            :loading="isFileTreeLoading"
+            @select="handleFileSelect"
+            @toggle="handleFileToggle"
+            @refresh="handleFileRefresh"
+        /></RoundCard>
       </div>
     </div>
-    <RoundCard class="card-example shadow-box">
-      <div class="demo-section">
-        <h2>内容居中</h2>
-        <button class="demo-button" @click="showCenteredDialog = true">
-          打开居中内容对话框
-        </button>
-        <Dialog
-          v-model="showCenteredDialog"
-          title="内容居中对话框"
-          :center="true"
-          @confirm="() => console.log('点击确定')"
-          @cancel="() => console.log('点击取消')"
-          @close="() => console.log('点击关闭')"
-        >
-          <p>这个对话框的内容是居中的</p>
-          <p>标题和内容都会水平居中对齐</p>
-        </Dialog>
-      </div>
-      <div class="demo-section">
-        <h2>内容不居中</h2>
-        <button class="demo-button" @click="showDialog = true">
-          打开居中内容对话框
-        </button>
-        <Dialog
-          v-model="showDialog"
-          title="内容不居中对话框"
-          @confirm="() => console.log('点击确定')"
-          @cancel="() => console.log('点击取消')"
-          @close="() => console.log('点击关闭')"
-        >
-          <p>这个对话框的内容是不居中的</p>
-          <p>标题和内容都不会水平居中对齐</p>
-        </Dialog>
-      </div>
-      <div class="demo-section">
-        <h2>插槽替换</h2>
-        <button class="demo-button" @click="showSlotDialog = true">
-          打开居中内容对话框
-        </button>
-        <Dialog
-          v-model="showSlotDialog"
-          title="插槽替换"
-          @confirm="() => console.log('点击确定')"
-          @cancel="() => console.log('点击取消')"
-          @close="() => console.log('点击关闭')"
-        >
-          <template #footer>footer插槽</template>
-          <p>这是一段占位内容</p>
-          <p>这是插槽替换的副本内容</p>
-        </Dialog>
-      </div>
-    </RoundCard>
-
-    <RoundCard class="card-example shadow-box">
-      <h3>卡片组件RoundCard示例</h3>
-      <div class="card-example-container custom-scrollbar">
-        <RoundCard class="image-card shadow-box" :radius="0">
-          <img src="https://api.xsot.cn/bing?jump=true" alt="示例图片" />
-        </RoundCard>
-        <RoundCard
-          v-for="i in 30"
-          :key="i"
-          class="image-card shadow-box"
-          :radius="i * 3"
-        >
-          {{ i * 3 }}
-          <img src="https://api.xsot.cn/bing?jump=true" alt="示例图片" />
-        </RoundCard>
-        <RoundCard class="image-card shadow-box">
-          <img src="https://api.xsot.cn/bing?jump=true" alt="示例图片" />
-        </RoundCard>
-      </div>
-    </RoundCard>
   </div>
   <ThemeTransition
     ref="themeTransitionRef"
     @transition-complete="onTransitionComplete"
   />
   <FpsMonitor position="bottomRight" marginRight="20px" marginBottom="10px" />
+
+  <Dialog
+    v-model="showFileDialog"
+    title="文件详情"
+    width="500px"
+    :show-cancel="false"
+    confirm-text="关闭"
+  >
+    <div v-if="fileDetail">
+      <div class="file-detail-item">
+        <strong>文件路径:</strong> {{ fileDetail.path }}
+      </div>
+      <div class="file-detail-item">
+        <strong>文件大小:</strong> {{ formatFileSize(fileDetail.size) }}
+      </div>
+      <div class="file-detail-item">
+        <strong>更新时间:</strong> {{ formatDate(fileDetail.modifiedTime) }}
+      </div>
+      <div class="file-detail-item">
+        <strong>文件MD5:</strong> {{ fileDetail.md5 }}
+      </div>
+      <div class="file-actions">
+        <button
+          class="action-button download-btn"
+          @click="handleDownload(fileDetail.path)"
+        >
+          下载
+        </button>
+        <button class="action-button preview-btn" @click="">预览</button>
+      </div>
+    </div>
+    <div v-else class="file-detail-loading">加载中...</div>
+  </Dialog>
+
+  <!-- 下载进度对话框 -->
+  <Dialog
+    v-model="showDownloadDialog"
+    title="文件下载"
+    width="400px"
+    :closable="false"
+    :close-on-click-mask="false"
+    :show-footer="false"
+  >
+    <div class="download-progress">
+      <div class="download-info">
+        <p class="download-filename">{{ downloadingFile }}</p>
+        <p class="download-percent">{{ downloadProgress }}%</p>
+      </div>
+      <div class="progress-bar-container">
+        <div
+          class="progress-bar"
+          :style="{ width: `${downloadProgress}%` }"
+        ></div>
+      </div>
+      <p class="download-status">{{ downloadStatus }}</p>
+      <div v-if="downloadComplete" class="download-actions">
+        <button class="action-button done-btn" @click="closeDownloadDialog">
+          完成
+        </button>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -122,8 +117,18 @@ import {
   type MenuItem,
 } from "wine-ui";
 import { debounce } from "wine-ui/utils";
-import type { MenuEventType } from "wine-ui/components/Topbar/types";
 import type { ThemeContext } from "wine-ui/plugins/theme/types";
+import FileTree from "./components/FileTree/FileTree.vue";
+import type { TreeNode } from "./components/FileTree/types";
+import { fetchFileManifest, buildTreeData } from "./services/fileManifest";
+import { onMounted } from "vue";
+import {
+  getFileDetailByMd5,
+  formatFileSize,
+  formatDate,
+  downloadFile,
+  type FileDetail,
+} from "./services/fileService";
 
 const isTopbarMenuOpen = ref(false);
 
@@ -131,62 +136,28 @@ const themeContext = inject<ThemeContext>("theme");
 
 const themeTransitionRef = ref();
 
-const showCenteredDialog = ref(false);
-const showDialog = ref(false);
-const showSlotDialog = ref(false);
-
 let pendingThemeChange = false;
 
 const menuItems: MenuItem[] = [
   {
     key: "home",
     label: "首页",
-    link: "#",
-    onClick: () => console.log("点击首页"),
+    onClick: () => (window.location.href = "/"),
   },
   {
-    key: "products",
-    label: "产品",
+    key: "changes",
+    label: "变更",
     link: "#products",
   },
   {
     key: "about",
     label: "关于",
-    link: "#about",
+  },
+  {
+    key: "seach",
+    label: "搜索",
   },
 ];
-
-const handleSelect = (item: MenuItem) => {
-  console.log("选中菜单项:", item.label);
-};
-
-const handleBeforeOpen = () => {
-  console.log("即将打开菜单");
-  return true;
-};
-
-const handleBeforeClose = (type: MenuEventType) => {
-  console.log("即将关闭菜单", type);
-  return true;
-};
-
-const handleOpened = () => {
-  console.log("菜单已打开");
-};
-
-const handleClosed = (type: MenuEventType) => {
-  console.log("菜单已关闭", type);
-  isTopbarMenuOpen.value = false;
-};
-
-const handleBeforeSelect = (item: MenuItem) => {
-  console.log("即将选择菜单项:", item.label);
-  return true;
-};
-
-const handleSelected = (item: MenuItem) => {
-  console.log("菜单项已选择:", item.label);
-};
 
 const onTransitionComplete = () => {
   if (pendingThemeChange) {
@@ -194,6 +165,103 @@ const onTransitionComplete = () => {
     themeContext?.toggleTheme();
     pendingThemeChange = false;
   }
+};
+
+const fileTreeData = ref<TreeNode[]>([]);
+const isFileTreeLoading = ref(true);
+
+const loadFileManifest = async () => {
+  isFileTreeLoading.value = true;
+  try {
+    const files = await fetchFileManifest();
+    fileTreeData.value = buildTreeData(files);
+  } catch (error) {
+    console.error("加载文件清单出错:", error);
+  } finally {
+    isFileTreeLoading.value = false;
+  }
+};
+
+// 添加文件刷新处理函数
+const handleFileRefresh = () => {
+  loadFileManifest();
+};
+
+const showFileDialog = ref(false);
+const fileDetail = ref<FileDetail | null>(null);
+const handleFileSelect = async (node: TreeNode) => {
+  console.log(node);
+  if (node.type === "file" && node.path && node.md5) {
+    fileDetail.value = null;
+    showFileDialog.value = true;
+
+    try {
+      fileDetail.value = await getFileDetailByMd5(node.md5);
+    } catch (error) {
+      console.error("获取文件详情出错:", error);
+      fileDetail.value = {
+        path: node.name || "",
+        size: 0,
+        modifiedTime: new Date().toISOString(),
+        isDirectory: false,
+        md5: node.md5 || "",
+      };
+    }
+  }
+};
+
+const handleFileToggle = (node: TreeNode) => {
+  const updateNode = (nodes: TreeNode[]): TreeNode[] => {
+    return nodes.map((n) => {
+      if (n.key === node.key) {
+        return { ...n, expanded: node.expanded };
+      }
+      if (n.children) {
+        return { ...n, children: updateNode(n.children) };
+      }
+      return n;
+    });
+  };
+  fileTreeData.value = updateNode(fileTreeData.value);
+};
+
+// 处理文件下载
+const handleDownload = (path: string) => {
+  downloadingFile.value = path.split("/").pop() || "文件";
+  showDownloadDialog.value = true;
+  downloadComplete.value = false;
+
+  const updateProgress = (progress: number) => {
+    downloadProgress.value = progress;
+    if (progress < 100) {
+      downloadStatus.value = `下载中 ${progress}%...`;
+    } else {
+      downloadStatus.value = "下载完成";
+      downloadComplete.value = true;
+    }
+  };
+
+  downloadFile(path, updateProgress).catch((error) => {
+    downloadStatus.value = `下载失败: ${error.message}`;
+    downloadComplete.value = true;
+  });
+};
+
+// 添加下载进度相关状态
+const showDownloadDialog = ref(false);
+const downloadProgress = ref(0);
+const downloadingFile = ref("");
+const downloadStatus = ref("准备下载...");
+const downloadComplete = ref(false);
+
+// 关闭下载对话框
+const closeDownloadDialog = () => {
+  showDownloadDialog.value = false;
+  // 重置下载状态
+  downloadProgress.value = 0;
+  downloadingFile.value = "";
+  downloadStatus.value = "准备下载...";
+  downloadComplete.value = false;
 };
 
 // 使用防抖包装主题切换函数
@@ -210,50 +278,12 @@ const toggleTheme = debounce(async () => {
   pendingThemeChange = await themeTransitionRef.value?.trigger(nextColor);
   console.log("开始主题切换动画", pendingThemeChange);
 }, 300);
+
+onMounted(() => {
+  loadFileManifest();
+});
 </script>
 
 <style lang="scss">
-@use "@theme/theme.scss" as *;
-
-.app-container {
-  min-height: 100vh;
-  background-color: var(--w-bg-color);
-  color: var(--w-text-color);
-  display: flex;
-  flex-direction: column;
-}
-
-.main-content {
-  padding-top: var(--w-topbar-height, 60px);
-  flex: 1;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-
-  @include mobile {
-    padding: 15px;
-  }
-}
-
-.card-example {
-  padding: 20px;
-  text-align: center;
-  margin: 30px;
-
-  &-container {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 20px 0;
-  }
-}
-
-.image-card {
-  width: 200px;
-  height: 166px;
-}
+@use "./index.scss";
 </style>
