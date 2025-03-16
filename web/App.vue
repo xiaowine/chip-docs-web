@@ -140,22 +140,14 @@ let pendingThemeChange = false;
 
 const menuItems: MenuItem[] = [
   {
-    key: "home",
-    label: "首页",
-    onClick: () => (window.location.href = "/"),
-  },
-  {
     key: "changes",
-    label: "变更",
+    label: "变更记录",
     link: "#products",
   },
   {
     key: "about",
-    label: "关于",
-  },
-  {
-    key: "seach",
-    label: "搜索",
+    label: "关于网站",
+    link: "#about",
   },
 ];
 

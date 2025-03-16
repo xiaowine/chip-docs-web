@@ -12,11 +12,15 @@
     padding: 12px;
     border-bottom: 1px solid var(--w-border-color);
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
     &-wrapper {
       position: relative;
       display: flex;
       align-items: center;
+      flex: 1;
     }
 
     &-icon,
@@ -60,7 +64,7 @@
       }
 
       &:hover {
-        border-color: var(--w-primary-color-hover);
+        border-color: var (--w-primary-color-hover);
       }
 
       &:focus {
@@ -73,9 +77,8 @@
 
   // 操作按钮区域
   &_actions {
-    margin-top: 10px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
   }
 
   // 刷新按钮样式
@@ -92,6 +95,7 @@
     cursor: pointer;
     transition: all 0.3s;
     padding: 0;
+    flex-shrink: 0;
 
     &:hover {
       border-color: var(--w-primary-color);
