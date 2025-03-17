@@ -105,7 +105,7 @@
         <p class="download-filename">{{ downloadingFile }}</p>
         <p class="download-percent">{{ downloadProgress }}%</p>
       </div>
-      <div class="progress-bar-container">
+      <div class="progress-container">
         <div
           class="progress-bar"
           :style="{ width: `${downloadProgress}%` }"
