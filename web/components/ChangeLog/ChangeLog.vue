@@ -69,9 +69,17 @@
                 <h4>修改文件 ({{ entry.changes.modified.length }})</h4>
               </div>
               <ul>
-                <li v-for="file in entry.changes.modified" :key="file.md5">
+                <li
+                  v-for="file in entry.changes.modified"
+                  :key="file.new_md5 || file.md5"
+                >
                   <span class="file-name">{{ file.filename }}</span>
-                  <span class="file-md5">[MD5: {{ file.md5 }}]</span>
+                  <span class="file-md5" v-if="file.md5"
+                    >[MD5: {{ file.md5 }}]</span
+                  >
+                  <span class="file-md5" v-if="file.old_md5 && file.new_md5"
+                    >[MD5: {{ file.old_md5 }} → {{ file.new_md5 }}]</span
+                  >
                 </li>
               </ul>
             </div>

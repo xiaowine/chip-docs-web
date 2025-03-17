@@ -3,7 +3,9 @@ import { addTimestampToUrl } from "../utils/url";
 // 变更记录的数据结构
 export interface FileChange {
   filename: string;
-  md5: string;
+  md5?: string;
+  old_md5?: string;
+  new_md5?: string;
 }
 
 export interface ChangeRecord {
