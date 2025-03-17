@@ -1,3 +1,34 @@
+// 定义滚动条美化 mixin
+@mixin custom-scrollbar(
+  $width: 6px,
+  $thumb-color: var(--w-border-color),
+  $thumb-hover: var(--w-border-color-dark)
+) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+
+    &-track {
+      background: transparent;
+      border-radius: $width / 2;
+    }
+
+    &-thumb {
+      background: $thumb-color;
+      border-radius: $width / 2;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: $thumb-hover;
+      }
+    }
+  }
+
+  // Firefox 滚动条样式
+  scrollbar-width: thin;
+  scrollbar-color: $thumb-color transparent;
+}
+
 .changelog {
   height: 100%;
   display: flex;
@@ -11,19 +42,12 @@
     display: flex;
     flex-direction: column;
 
-    &::-webkit-scrollbar {
-      width: 6px;
-      &-track {
-        background: transparent;
-      }
-      &-thumb {
-        background: var(--w-border-color, #ccc);
-        border-radius: 3px;
-        &:hover {
-          background: var(--w-border-color-dark, #aaa);
-        }
-      }
-    }
+    // 美化滚动条
+    @include custom-scrollbar(
+      6px,
+      var(--w-scrollbar-thumb-color, var(--w-border-color, #ccc)),
+      var(--w-scrollbar-thumb-hover-color, var(--w-border-color-dark, #aaa))
+    );
   }
 
   // 状态提示样式
@@ -145,7 +169,15 @@
     overflow: hidden;
     transition: height 0.3s ease, opacity 0.3s ease;
     will-change: height, opacity;
-    animation: fadeIn 0.3s ease;
+
+    // 添加内部滚动条
+    max-height: 400px;
+    overflow-y: auto;
+    @include custom-scrollbar(
+      5px,
+      var(--w-scrollbar-thumb-color, var(--w-border-color, #ccc)),
+      var(--w-scrollbar-thumb-hover-color, var(--w-border-color-dark, #aaa))
+    );
   }
 
   // 展开动画相关
