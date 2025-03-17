@@ -117,7 +117,9 @@ const loadChangelog = async () => {
 
   try {
     const data = await fetchChangelog();
-    changelog.value = data;
+    changelog.value = data.sort((a, b) => {
+      return a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0;
+    });
   } catch (e) {
     error.value = e instanceof Error ? e.message : "加载变更记录失败";
   } finally {
