@@ -46,7 +46,7 @@ const handleSelect = (node: TreeNode) => emit("select", node);
 const handleToggle = (node: TreeNode) => emit("toggle", node);
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use "@theme/theme.scss" as *;
 @use "../index.scss";
 </style>

@@ -137,7 +137,7 @@ const handleRefresh = () => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use "@theme/theme.scss" as *;
 @use "./index.scss";
 </style>
