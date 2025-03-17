@@ -1,3 +1,6 @@
+// 引入 sass:math 模块
+@use "sass:math";
+
 // 定义滚动条美化 mixin
 @mixin custom-scrollbar(
   $width: 6px,
@@ -10,12 +13,12 @@
 
     &-track {
       background: transparent;
-      border-radius: $width / 2;
+      border-radius: math.div($width, 2);
     }
 
     &-thumb {
       background: $thumb-color;
-      border-radius: $width / 2;
+      border-radius: math.div($width, 2);
       transition: background 0.2s ease;
 
       &:hover {
