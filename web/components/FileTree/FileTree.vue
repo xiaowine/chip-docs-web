@@ -48,6 +48,22 @@
           <div class="file-tree_skeleton-line"></div>
         </div>
       </div>
+
+      <!-- 错误提示 -->
+      <div v-else-if="props.errorMessage" class="file-tree_error">
+        <div class="file-tree_error-icon">!</div>
+        <div class="file-tree_error-message">{{ props.errorMessage }}</div>
+        <button class="file-tree_error-retry" @click="handleRefresh">
+          重新加载
+        </button>
+      </div>
+
+      <!-- 空数据提示 -->
+      <div v-else-if="!filteredNodes.length" class="file-tree_empty">
+        <div class="file-tree_empty-icon">📁</div>
+        <div class="file-tree_empty-message">没有找到文件</div>
+      </div>
+
       <!-- 实际内容 -->
       <TreeNode
         v-else
@@ -74,6 +90,7 @@ const props = withDefaults(defineProps<FileTreeProps>(), {
   searchable: true,
   defaultExpanded: false,
   loading: false,
+  errorMessage: "",
 });
 
 const emit = defineEmits<FileTreeEmits>();

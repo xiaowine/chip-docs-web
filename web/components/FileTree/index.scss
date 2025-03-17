@@ -162,6 +162,73 @@
       background-color: var(--w-border-color);
     }
   }
+
+  // 错误提示样式
+  &_error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    text-align: center;
+
+    &-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--w-danger-color, #f56c6c);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    &-message {
+      margin-bottom: 16px;
+      color: var(--w-text-color-secondary);
+      padding: 0 20px;
+    }
+
+    &-retry {
+      padding: 8px 16px;
+      background-color: var(--w-primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--w-button-border-radius, 4px);
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: var(--w-primary-color-hover);
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+  }
+
+  // 空状态提示样式
+  &_empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+
+    &-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    &-message {
+      color: var(--w-text-color-secondary);
+    }
+  }
 }
 
 @keyframes skeleton-pulse {

@@ -31,6 +31,7 @@
               <FileTree
                 :data="fileTreeData"
                 :loading="isFileTreeLoading"
+                :error-message="fileTreeErrorMessage"
                 @select="handleFileSelect"
                 @toggle="handleFileToggle"
                 @refresh="handleFileRefresh"
@@ -191,14 +192,23 @@ const onTransitionComplete = () => {
 
 const fileTreeData = ref<TreeNode[]>([]);
 const isFileTreeLoading = ref(true);
+const fileTreeErrorMessage = ref("");
 
 const loadFileManifest = async () => {
   isFileTreeLoading.value = true;
+  fileTreeErrorMessage.value = "";
+
   try {
     const files = await fetchFileManifest();
     fileTreeData.value = buildTreeData(files);
+
+    if (fileTreeData.value.length === 0) {
+      fileTreeErrorMessage.value = "未找到任何文件数据";
+    }
   } catch (error) {
     console.error("加载文件清单出错:", error);
+    fileTreeErrorMessage.value =
+      error instanceof Error ? error.message : "无法加载文件清单，请稍后重试";
   } finally {
     isFileTreeLoading.value = false;
   }

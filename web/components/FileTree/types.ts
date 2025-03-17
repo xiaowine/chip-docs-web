@@ -12,11 +12,12 @@ export interface FileTreeProps {
   data: TreeNode[];
   searchable?: boolean;
   defaultExpanded?: boolean;
-  loading?: boolean; // 添加loading属性
+  loading?: boolean;
+  errorMessage?: string;
 }
 
 export interface FileTreeEmits {
   (e: "select", node: TreeNode): void;
   (e: "toggle", node: TreeNode): void;
-  (e: "refresh"): void; // 添加刷新事件
+  (e: "refresh"): void;
 }
