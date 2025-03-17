@@ -145,9 +145,12 @@
 
     img {
       max-width: 100%;
-      height: auto; // 确保图片等比例缩放
-      display: block; // 使图片作为块元素显示
-      margin: 1em auto; // 图片居中显示
+      display: block;
+      height: auto;
+      object-fit: contain;
+      margin: 1.5em auto; /* 上下margin增加，左右自动居中 */
+      border-radius: 4px; /* 可选：添加圆角使图片更美观 */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 可选：添加轻微阴影 */
     }
 
     table {
