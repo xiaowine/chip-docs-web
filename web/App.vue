@@ -19,7 +19,6 @@
     <div class="main-content">
       <div class="container">
         <div class="content-layout">
-          <!-- 左侧文件树 -->
           <div class="file-tree-container">
             <RoundCard
               shadow
@@ -38,8 +37,6 @@
               />
             </RoundCard>
           </div>
-
-          <!-- 右侧Markdown显示 -->
           <div class="markdown-container">
             <RoundCard
               shadow

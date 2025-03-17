@@ -44,7 +44,6 @@ const lastUpdated = ref<string | null>(null);
 
 // 从Markdown内容中提取文档标题
 const documentTitle = computed(() => {
-  // 尝试从内容的第一个h1标签提取标题
   const match = content.value.match(/^#\s+(.*?)$/m);
   if (match && match[1]) {
     return match[1];
@@ -116,8 +115,20 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   overflow: auto;
-  padding: 20px;
+  padding: 20px 0; // 修改padding，只保留上下内边距，去掉左右内边距
+  max-width: 100%; // 确保内容不会溢出
+  margin: 0 auto; // 居中显示
   color: var(--w-text-color);
+
+  // 添加内容容器，控制内容区域的宽度和居中
+  .markdown-header,
+  .markdown-content,
+  .loading-container,
+  .error-container {
+    padding: 0 24px; // 为内容区域添加左右内边距
+    max-width: 1000px; // 设置内容区域的最大宽度
+    margin: 0 auto; // 居中内容区域
+  }
 
   &.loading {
     display: flex;
