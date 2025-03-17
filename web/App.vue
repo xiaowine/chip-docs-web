@@ -141,6 +141,17 @@
   >
     <ChangeLog />
   </Dialog>
+
+  <!-- 关于网站对话框 -->
+  <Dialog
+    v-model="showAboutDialog"
+    title="关于网站"
+    width="600px"
+    :show-cancel="false"
+    confirm-text="关闭"
+  >
+    <About />
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -170,6 +181,7 @@ import {
 } from "./services/fileService";
 import MarkdownViewer from "./components/MarkdownViewer/MarkdownViewer.vue";
 import ChangeLog from "./components/ChangeLog/ChangeLog.vue";
+import About from "./components/About.vue";
 
 const isTopbarMenuOpen = ref(false);
 
@@ -181,6 +193,8 @@ let pendingThemeChange = false;
 
 // 变更记录对话框控制变量
 const showChangelogDialog = ref(false);
+// 关于网站对话框控制变量
+const showAboutDialog = ref(false);
 
 const menuItems: MenuItem[] = [
   {
@@ -195,7 +209,9 @@ const menuItems: MenuItem[] = [
     key: "about",
     label: "关于网站",
     link: "#about",
-    onClick() {},
+    onClick: () => {
+      showAboutDialog.value = true;
+    },
   },
 ];
 
