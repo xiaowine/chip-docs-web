@@ -40,20 +40,35 @@ export async function getFileDetailByMd5(md5: string): Promise<FileDetail> {
  * @param path 文件路径
  * @param onProgress 下载进度回调函数，参数为 0-100 的数值
  * @param signal 可选的AbortSignal对象，用于取消下载
+ * @param callbacks 可选的回调函数对象，用于处理不同状态
  */
 export async function downloadFile(
   path: string,
   onProgress?: (progress: number) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  callbacks?: {
+    onSuccess?: () => void;
+    onCancel?: () => void;
+    onError?: (error: Error) => void;
+  }
 ): Promise<void> {
   const downloadUrl = addTimestampToUrl(`${BASE_URL}/${path}`);
   try {
+    // 添加取消检查
+    if (signal?.aborted) {
+      onProgress?.(0);
+      callbacks?.onCancel?.();
+      return;
+    }
+
     // 初始进度报告
     onProgress?.(0);
 
     const response = await fetch(downloadUrl, { signal });
     if (!response.ok) {
-      throw new Error(`下载失败，状态码: ${response.status}`);
+      const error = new Error(`下载失败，状态码: ${response.status}`);
+      callbacks?.onError?.(error);
+      return;
     }
 
     const contentLength = Number(response.headers.get("content-length")) || 0;
@@ -63,6 +78,14 @@ export async function downloadFile(
 
     if (reader) {
       while (true) {
+        // 检查是否已经取消
+        if (signal?.aborted) {
+          reader.cancel(); // 重要：取消读取流
+          onProgress?.(0); // 重置进度
+          callbacks?.onCancel?.();
+          return;
+        }
+
         const { done, value } = await reader.read();
         if (done) break;
 
@@ -71,9 +94,16 @@ export async function downloadFile(
 
         if (onProgress && contentLength) {
           const progress = (receivedLength / contentLength) * 100;
-          onProgress(Math.min(Math.round(progress), 100));
+          onProgress(Math.min(Math.round(progress), 99)); // 保持在99%以下直到完全完成
         }
       }
+    }
+
+    // 检查是否在创建Blob之前已取消
+    if (signal?.aborted) {
+      onProgress?.(0);
+      callbacks?.onCancel?.();
+      return;
     }
 
     // 确保进度为100%
@@ -88,9 +118,20 @@ export async function downloadFile(
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("下载文件时出错:", error);
-    throw error;
+
+    callbacks?.onSuccess?.();
+  } catch (error: unknown) {
+    // 确保终止下载时的错误处理更完善
+    if (error instanceof DOMException && error.name === "AbortError") {
+      console.log("下载已取消");
+      onProgress?.(0); // 重置进度
+      callbacks?.onCancel?.();
+    } else {
+      console.error("下载文件时出错:", error);
+      callbacks?.onError?.(
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
   }
 }
 

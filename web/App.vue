@@ -222,7 +222,6 @@ const handleFileRefresh = () => {
 const showFileDialog = ref(false);
 const fileDetail = ref<FileDetail | null>(null);
 const handleFileSelect = async (node: TreeNode) => {
-  console.log(node);
   if (node.type === "file" && node.path && node.md5) {
     fileDetail.value = null;
     showFileDialog.value = true;
@@ -265,6 +264,8 @@ const handleDownload = (path: string) => {
   downloadingFile.value = path.split("/").pop() || "文件";
   showDownloadDialog.value = true;
   downloadComplete.value = false;
+  downloadProgress.value = 0;
+  downloadStatus.value = "准备下载...";
 
   // 创建新的 AbortController
   currentDownloadController.value = new AbortController();
@@ -279,27 +280,35 @@ const handleDownload = (path: string) => {
     }
   };
 
-  downloadFile(
-    path,
-    updateProgress,
-    currentDownloadController.value.signal
-  ).catch((error) => {
-    // 检查是否是因为取消导致的错误
-    if (error.name === "AbortError") {
+  // 使用回调函数处理下载状态
+  downloadFile(path, updateProgress, currentDownloadController.value.signal, {
+    onSuccess: () => {
+      downloadStatus.value = "下载完成";
+      downloadComplete.value = true;
+    },
+    onCancel: () => {
       downloadStatus.value = "下载已取消";
-    } else {
+      downloadComplete.value = true;
+      downloadProgress.value = 0;
+    },
+    onError: (error) => {
       downloadStatus.value = `下载失败: ${error.message}`;
-    }
-    downloadComplete.value = true;
+      downloadComplete.value = true;
+    },
   });
 };
 
 // 取消下载
 const cancelDownload = () => {
   if (currentDownloadController.value) {
-    currentDownloadController.value.abort();
-    currentDownloadController.value = null;
+    // 先更新UI状态
     downloadStatus.value = "正在取消下载...";
+
+    // 延迟一帧再执行取消操作，让UI有时间更新
+    setTimeout(() => {
+      currentDownloadController.value?.abort();
+      currentDownloadController.value = null;
+    }, 0);
   }
 };
 
