@@ -6,6 +6,8 @@
   max-height: 80%;
   overflow: hidden;
   min-width: 300px;
+  display: flex;
+  flex-direction: column;
   &-mask {
     position: fixed;
     top: 0;
@@ -60,9 +62,10 @@
   &-body {
     padding: 20px;
     color: var(--w-text-color);
-    max-height: 55vh;
-    overflow-y: hidden;
+    flex: 1;
+    overflow-y: auto;
     overflow-x: hidden;
+    max-height: 60vh;
 
     &--center {
       text-align: center;

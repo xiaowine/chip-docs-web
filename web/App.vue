@@ -21,7 +21,6 @@
         <div class="content-layout">
           <div class="file-tree-container">
             <RoundCard
-              shadow
               style="
                 height: 100%;
                 border: 2px solid var(--w-border-color) !important;
@@ -40,7 +39,6 @@
           </div>
           <div class="markdown-container">
             <RoundCard
-              shadow
               style="
                 height: 100%;
                 border: 2px solid var(--w-border-color) !important;
@@ -132,6 +130,17 @@
       </div>
     </div>
   </Dialog>
+
+  <!-- 变更记录对话框 -->
+  <Dialog
+    v-model="showChangelogDialog"
+    title="变更记录"
+    width="700px"
+    :show-cancel="false"
+    confirm-text="关闭"
+  >
+    <ChangeLog />
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -160,6 +169,7 @@ import {
   type FileDetail,
 } from "./services/fileService";
 import MarkdownViewer from "./components/MarkdownViewer/MarkdownViewer.vue";
+import ChangeLog from "./components/ChangeLog/ChangeLog.vue";
 
 const isTopbarMenuOpen = ref(false);
 
@@ -169,16 +179,23 @@ const themeTransitionRef = ref();
 
 let pendingThemeChange = false;
 
+// 变更记录对话框控制变量
+const showChangelogDialog = ref(false);
+
 const menuItems: MenuItem[] = [
   {
     key: "changes",
     label: "变更记录",
-    link: "#products",
+    link: "#changes",
+    onClick: () => {
+      showChangelogDialog.value = true;
+    },
   },
   {
     key: "about",
     label: "关于网站",
     link: "#about",
+    onClick() {},
   },
 ];
 
