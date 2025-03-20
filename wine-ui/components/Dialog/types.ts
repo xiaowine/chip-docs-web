@@ -39,6 +39,10 @@ export interface DialogProps {
    * 取消按钮文本
    */
   cancelText?: string;
+  /**
+   * 自定义对话框类名
+   */
+  customClass?: string;
 }
 
 export interface DialogEmits {

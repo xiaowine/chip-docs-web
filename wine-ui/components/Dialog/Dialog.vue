@@ -2,7 +2,12 @@
   <Teleport to="body">
     <Transition name="w-dialog-fade">
       <div v-if="modelValue" class="w-dialog-mask" @click="handleMaskClick">
-        <div class="w-dialog" :style="dialogStyle" @click.stop>
+        <div
+          class="w-dialog"
+          :class="props.customClass"
+          :style="dialogStyle"
+          @click.stop
+        >
           <div class="w-dialog-header" v-if="title || $slots.header">
             <slot name="header">
               <h3
@@ -61,6 +66,7 @@ const props = withDefaults(defineProps<DialogProps>(), {
   showCancel: true,
   confirmText: "确定",
   cancelText: "取消",
+  customClass: "",
 });
 
 const emit = defineEmits<DialogEmits>();

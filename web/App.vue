@@ -85,10 +85,33 @@
         >
           下载
         </button>
-        <button class="action-button preview-btn" @click="">预览</button>
+        <button
+          class="action-button preview-btn"
+          @click="handlePreview(fileDetail.path)"
+        >
+          预览
+        </button>
       </div>
     </div>
     <div v-else class="file-detail-loading">加载中...</div>
+  </Dialog>
+
+  <!-- 文件预览对话框 -->
+  <Dialog
+    v-model="showPreviewDialog"
+    :title="previewFileName"
+    width="90vw"
+    customClass="preview-dialog"
+    :show-cancel="false"
+    confirm-text="关闭"
+    :closable="true"
+  >
+    <FilePreview
+      :file-path="previewFilePath"
+      :filename="previewFileName"
+      @download="handleDownload"
+      @error="handlePreviewError"
+    />
   </Dialog>
 
   <!-- 下载进度对话框 -->
@@ -182,12 +205,20 @@ import {
 import MarkdownViewer from "./components/MarkdownViewer/MarkdownViewer.vue";
 import ChangeLog from "./components/ChangeLog/ChangeLog.vue";
 import About from "./components/About.vue";
+import FilePreview from "./components/FilePreview/FilePreview.vue";
 
 const isTopbarMenuOpen = ref(false);
 
 const themeContext = inject<ThemeContext>("theme");
 
 const themeTransitionRef = ref();
+
+const markdownUrl = ref("https://xiaowine.github.io/chip-docs/README.md");
+
+// 添加预览相关状态
+const showPreviewDialog = ref(false);
+const previewFilePath = ref("");
+const previewFileName = ref("");
 
 let pendingThemeChange = false;
 
@@ -382,10 +413,44 @@ onMounted(() => {
   loadFileManifest();
 });
 
-// Markdown预览相关状态 - 默认加载README文件
-const markdownUrl = ref("https://xiaowine.github.io/chip-docs/README.md");
+const handlePreview = (path: string) => {
+  previewFilePath.value = path;
+  previewFileName.value = path.split("/").pop() || "文件";
+  showPreviewDialog.value = true;
+};
+
+// 处理预览错误
+const handlePreviewError = (message: string) => {
+  console.error("文件预览错误:", message);
+  // 可以在这里添加提示或其他处理
+};
 </script>
 
 <style lang="scss">
 @use "./index.scss";
+
+// 预览对话框样式
+.preview-dialog {
+  :deep(.w-dialog-body) {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+  }
+
+  &.w-dialog {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// 为不同设备进行响应式调整
+@media (max-width: 768px) {
+  .preview-dialog {
+    &.w-dialog {
+      width: 95vw !important;
+      height: 80vh;
+    }
+  }
+}
 </style>
