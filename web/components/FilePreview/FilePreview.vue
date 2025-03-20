@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import MarkdownViewer from "../MarkdownViewer/MarkdownViewer.vue";
 import PdfViewer from "../PdfViewer/PdfViewer.vue";
 
@@ -92,16 +92,16 @@ const fileUrl = computed(() => {
   return `https://xiaowine.github.io/chip-docs/${props.filePath}`;
 });
 
-// 构建PDF查看器URL
-const pdfViewerUrl = computed(() => {
-  if (fileType.value === "pdf") {
-    // 使用PDF.js或浏览器内置PDF查看器
-    return `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(
-      fileUrl.value
-    )}`;
-  }
-  return "";
-});
+// // 构建PDF查看器URL
+// const pdfViewerUrl = computed(() => {
+//   if (fileType.value === "pdf") {
+//     // 使用PDF.js或浏览器内置PDF查看器
+//     return `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(
+//       fileUrl.value
+//     )}`;
+//   }
+//   return "";
+// });
 
 // 下载当前文件
 const handleDownload = () => {
