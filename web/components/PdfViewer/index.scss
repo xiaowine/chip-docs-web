@@ -1,3 +1,32 @@
+// 定义颜色变量
+:root {
+  // 浅色模式变量
+  --pdf-bg-color: var(--w-bg-color, #ffffff);
+  --pdf-secondary-bg: var(--w-bg-color-tertiary, #f5f5f5);
+  --pdf-border-color: var(--w-border-color, #e0e0e0);
+  --pdf-text-color: var(--w-text-color, #333333);
+  --pdf-primary-color: var(--w-primary-color, #0078d4);
+  --pdf-primary-rgb: var(--w-primary-color-rgb, 0, 120, 212);
+  --pdf-hover-bg: var(--w-bg-color-hover, #f0f0f0);
+  --pdf-error-color: var(--w-error-color, #d83b01);
+  --pdf-shadow-color: rgba(0, 0, 0, 0.15);
+}
+
+// 深色模式变量
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pdf-bg-color: var(--w-bg-color-dark, #252525);
+    --pdf-secondary-bg: var(--w-bg-color-tertiary-dark, #1e1e1e);
+    --pdf-border-color: var(--w-border-color-dark, #444444);
+    --pdf-text-color: var(--w-text-color-dark, #e0e0e0);
+    --pdf-primary-color: var(--w-primary-color-dark, #73bcff);
+    --pdf-primary-rgb: var(--w-primary-color-rgb-dark, 115, 188, 255);
+    --pdf-hover-bg: var(--w-bg-color-hover-dark, #333333);
+    --pdf-error-color: var(--w-error-color-dark, #ff6161);
+    --pdf-shadow-color: rgba(0, 0, 0, 0.3);
+  }
+}
+
 // 主容器样式
 .pdf-viewer {
   display: flex;
@@ -5,7 +34,7 @@
   width: 100%;
   height: 100%;
   position: relative;
-  background-color: var(--w-bg-color-tertiary, #f5f5f5);
+  background-color: var(--pdf-secondary-bg);
   overflow: hidden; // 防止整体滚动，仅允许内部容器滚动
 
   // 加载状态
@@ -21,16 +50,16 @@
     right: 0;
     bottom: 0;
     z-index: 10;
-    background-color: var(--w-bg-color-tertiary, #f5f5f5);
+    background-color: var(--pdf-secondary-bg);
 
     &.active {
       display: flex;
     }
 
     .loading-spinner {
-      border: 5px solid rgba(var(--w-primary-color-rgb, 0, 120, 212), 0.2);
+      border: 5px solid rgba(var(--pdf-primary-rgb), 0.2);
       border-radius: 50%;
-      border-top: 5px solid var(--w-primary-color, #0078d4);
+      border-top: 5px solid var(--pdf-primary-color);
       width: 50px;
       height: 50px;
       animation: spin 1s linear infinite;
@@ -53,7 +82,7 @@
     justify-content: center;
     align-items: center;
     height: 100%;
-    color: var(--w-error-color, #d83b01);
+    color: var(--pdf-error-color);
     text-align: center;
     padding: 20px;
     font-size: 16px;
@@ -63,7 +92,7 @@
     right: 0;
     bottom: 0;
     z-index: 10;
-    background-color: var(--w-bg-color-tertiary, #f5f5f5);
+    background-color: var(--pdf-secondary-bg);
 
     &.active {
       display: flex;
@@ -90,8 +119,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 16px;
-    background-color: var(--w-bg-color, #ffffff);
-    border-bottom: 1px solid var(--w-border-color, #e0e0e0);
+    background-color: var(--pdf-bg-color);
+    border-bottom: 1px solid var(--pdf-border-color);
     z-index: 5; // 提高z-index确保在内容之上
     position: sticky; // 使用sticky定位
     top: 0; // 固定在顶部
@@ -115,14 +144,14 @@
     display: flex;
     justify-content: flex-start; // 改为flex-start，确保内容从左侧开始排列
     align-items: flex-start;
-    background-color: var(--w-bg-color, #ffffff);
+    background-color: var(--pdf-bg-color);
     height: calc(100% - 56px); // 减去控制栏高度，56px是控制栏的高度+padding
 
     canvas {
       display: block;
       max-width: none;
       margin: 0 auto; // 保留水平居中
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 2px 8px var(--pdf-shadow-color);
     }
   }
 }
@@ -133,10 +162,10 @@
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
-  background-color: var(--w-bg-color, #ffffff);
-  border: 1px solid var(--w-border-color, #e0e0e0);
+  background-color: var(--pdf-bg-color);
+  border: 1px solid var(--pdf-border-color);
   border-radius: 4px;
-  color: var(--w-text-color, #333333);
+  color: var(--pdf-text-color);
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 14px;
@@ -155,9 +184,9 @@
   }
 
   &:hover:not(:disabled) {
-    background-color: var(--w-bg-color-hover, #f0f0f0);
-    border-color: var(--w-primary-color, #0078d4);
-    color: var(--w-primary-color, #0078d4);
+    background-color: var(--pdf-hover-bg);
+    border-color: var(--pdf-primary-color);
+    color: var(--pdf-primary-color);
   }
 
   &:active:not(:disabled) {
@@ -178,55 +207,7 @@
   min-width: 40px;
   text-align: center;
   user-select: none;
-  color: var(--w-text-color, #333333);
-}
-
-// 深色模式适配
-@media (prefers-color-scheme: dark) {
-  .pdf-viewer {
-    background-color: var(--w-bg-color-tertiary-dark, #1e1e1e);
-
-    &_loading {
-      background-color: var(--w-bg-color-tertiary-dark, #1e1e1e);
-
-      .loading-spinner {
-        border-color: rgba(var(--w-primary-color-rgb-dark, 115, 188, 255), 0.2);
-        border-top-color: var(--w-primary-color-dark, #73bcff);
-      }
-    }
-
-    &_error {
-      background-color: var(--w-bg-color-tertiary-dark, #1e1e1e);
-      color: var(--w-error-color-dark, #ff6161);
-    }
-
-    &_controls {
-      background-color: var(--w-bg-color-dark, #252525);
-      border-color: var(--w-border-color-dark, #444444);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    &_container {
-      background-color: var(--w-bg-color-dark, #252525);
-    }
-  }
-
-  .pdf-control-button {
-    background-color: var(--w-bg-color-dark, #252525);
-    border-color: var(--w-border-color-dark, #444444);
-    color: var(--w-text-color-dark, #e0e0e0);
-
-    &:hover:not(:disabled) {
-      background-color: var(--w-bg-color-hover-dark, #333333);
-      border-color: var(--w-primary-color-dark, #73bcff);
-      color: var(--w-primary-color-dark, #73bcff);
-    }
-  }
-
-  .pdf-page-info,
-  .pdf-zoom-info {
-    color: var(--w-text-color-dark, #e0e0e0);
-  }
+  color: var(--pdf-text-color);
 }
 
 /* 响应式调整 */
