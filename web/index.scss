@@ -7,6 +7,7 @@
   color: var(--w-text-color);
   display: flex;
   flex-direction: column;
+  touch-action: none;
 }
 
 .main-content {
@@ -248,5 +249,41 @@
 
   .content-layout {
     padding: 10px;
+  }
+}
+
+// 预览对话框样式
+.preview-dialog {
+  :deep(.w-dialog-body) {
+    flex: 1;
+    overflow: hidden; // 修改这里，防止对话框本身滚动
+    padding: 0;
+  }
+
+  &.w-dialog {
+    display: flex;
+    flex-direction: column;
+    height: 70vh; // 固定高度
+  }
+
+  // 确保 FilePreview 组件和 PDF 查看器可以填充完整空间
+  :deep(.file-preview) {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  :deep(.pdf-viewer) {
+    flex: 1;
+    height: 100%;
+  }
+}
+
+// 为不同设备进行响应式调整
+@media (max-width: 768px) {
+  .preview-dialog {
+    &.w-dialog {
+      width: 95vw !important;
+    }
   }
 }

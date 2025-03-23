@@ -100,7 +100,7 @@
   <Dialog
     v-model="showPreviewDialog"
     :title="previewFileName"
-    width="90vw"
+    width="70vw"
     customClass="preview-dialog"
     :show-cancel="false"
     confirm-text="关闭"
@@ -428,29 +428,4 @@ const handlePreviewError = (message: string) => {
 
 <style lang="scss">
 @use "./index.scss";
-
-// 预览对话框样式
-.preview-dialog {
-  :deep(.w-dialog-body) {
-    flex: 1;
-    overflow: auto;
-    padding: 0;
-  }
-
-  &.w-dialog {
-    height: 90vh;
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-// 为不同设备进行响应式调整
-@media (max-width: 768px) {
-  .preview-dialog {
-    &.w-dialog {
-      width: 95vw !important;
-      height: 80vh;
-    }
-  }
-}
 </style>

@@ -101,12 +101,29 @@ const canvasContainer = ref<HTMLElement | null>(null);
 const currentPageRendering = ref(false);
 const pageNumPending = ref<number | null>(null);
 
+// 检测设备类型并设置初始缩放比例
+const setInitialScale = () => {
+  const isMobile = window.innerWidth < 768;
+  const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+
+  if (isMobile) {
+    scale.value = 0.5; // 移动设备初始缩放比例为0.5
+  } else if (isTablet) {
+    scale.value = 0.75; // 平板设备初始缩放比例为0.75
+  } else {
+    scale.value = 1.0; // 桌面设备保持1.0的缩放比例
+  }
+};
+
 // 加载PDF文档
 const loadPdf = async () => {
   loading.value = true;
   error.value = null;
 
   try {
+    // 设置初始缩放比例
+    setInitialScale();
+
     // 使用fetch获取PDF文件
     const response = await fetch(props.url);
     if (!response.ok) {
@@ -162,12 +179,18 @@ const renderPage = async (pageNum: number) => {
     canvas.width = viewport.width;
     canvas.height = viewport.height;
 
-    // 添加样式使其在容器中正确显示和滚动
-    canvas.style.width = `${viewport.width}px`;
-    canvas.style.height = `${viewport.height}px`;
+    // 添加包装元素以确保滚动正常工作
+    const wrapper = document.createElement("div");
+    wrapper.style.width = `${viewport.width}px`;
+    wrapper.style.height = `${viewport.height}px`;
+    wrapper.style.margin = "0 auto"; // 居中显示
+    wrapper.style.position = "relative"; // 添加相对定位
 
-    // 将画布添加到容器中
-    canvasContainer.value?.appendChild(canvas);
+    // 将画布添加到包装元素
+    wrapper.appendChild(canvas);
+
+    // 将包装元素添加到容器中
+    canvasContainer.value?.appendChild(wrapper);
 
     // 渲染PDF页面
     const renderContext = {
@@ -236,6 +259,20 @@ onMounted(() => {
   if (props.url) {
     loadPdf();
   }
+
+  // 添加窗口大小变化的监听器，以便在调整窗口大小时更新缩放比例
+  window.addEventListener("resize", () => {
+    // 仅在文档已经加载时处理
+    if (pdfDocument && !currentPageRendering.value) {
+      const oldScale = scale.value;
+      setInitialScale();
+
+      // 如果缩放比例改变了，重新渲染当前页面
+      if (oldScale !== scale.value) {
+        queueRenderPage(currentPage.value);
+      }
+    }
+  });
 });
 
 // 组件卸载前清理资源
@@ -244,6 +281,9 @@ onBeforeUnmount(() => {
     pdfDocument.destroy();
     pdfDocument = null;
   }
+
+  // 移除窗口大小变化的监听器
+  window.removeEventListener("resize", () => {});
 });
 </script>
 

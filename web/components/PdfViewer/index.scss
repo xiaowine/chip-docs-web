@@ -6,6 +6,7 @@
   height: 100%;
   position: relative;
   background-color: var(--w-bg-color-tertiary, #f5f5f5);
+  overflow: hidden; // 防止整体滚动，仅允许内部容器滚动
 
   // 加载状态
   &_loading {
@@ -75,6 +76,8 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
+    position: relative; // 添加相对定位
+    overflow: hidden; // 防止整体滚动
 
     &.hidden {
       visibility: hidden;
@@ -89,8 +92,13 @@
     padding: 10px 16px;
     background-color: var(--w-bg-color, #ffffff);
     border-bottom: 1px solid var(--w-border-color, #e0e0e0);
-    z-index: 1;
+    z-index: 5; // 提高z-index确保在内容之上
+    position: sticky; // 使用sticky定位
+    top: 0; // 固定在顶部
+    left: 0;
+    right: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0; // 防止控制栏缩小
 
     &-group {
       display: flex;
@@ -102,17 +110,18 @@
   // PDF容器
   &_container {
     flex: 1;
-    overflow: auto;
+    overflow: auto; // 保持滚动
     padding: 5px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; // 改为flex-start，确保内容从左侧开始排列
     align-items: flex-start;
     background-color: var(--w-bg-color, #ffffff);
+    height: calc(100% - 56px); // 减去控制栏高度，56px是控制栏的高度+padding
 
     canvas {
       display: block;
       max-width: none;
-      margin: 0 auto;
+      margin: 0 auto; // 保留水平居中
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
   }
@@ -224,38 +233,82 @@
 @media (max-width: 768px) {
   .pdf-viewer {
     &_controls {
-      flex-wrap: wrap;
       padding: 8px;
+      position: sticky; // 确保在移动设备上也保持固定
+      top: 0;
+      // 移除 flex-wrap: wrap; 保持横向排布
 
       &-group {
-        margin-bottom: 4px;
-        width: 100%;
-        justify-content: center;
+        // 移除下面的样式，避免纵向排列
+        // margin-bottom: 4px;
+        // width: 100%;
+        gap: 4px; // 减小间距使元素更紧凑
 
+        // 第一组控制按钮靠左
+        &:first-child {
+          flex: 1;
+          justify-content: flex-start;
+        }
+
+        // 第二组控制按钮靠右
         &:last-child {
-          margin-bottom: 0;
+          flex: 1;
+          justify-content: flex-end;
         }
       }
     }
 
     &_container {
-      padding: 12px;
+      padding: 8px;
+      height: calc(100% - 52px); // 调整为移动设备上控制栏的新高度
+
+      canvas {
+        max-width: 100%; // 在移动设备上，确保canvas不超出容器
+      }
     }
   }
 
+  // 调整按钮尺寸
   .pdf-control-button {
-    padding: 4px 8px;
-    min-width: 32px;
-    height: 32px;
+    padding: 4px 6px;
+    min-width: 28px;
+    height: 28px;
+  }
+
+  // 调整页码和缩放信息的文字大小
+  .pdf-page-info,
+  .pdf-zoom-info {
+    font-size: 12px;
+    min-width: 30px;
   }
 }
 
+// 超小屏幕的额外优化
 @media (max-width: 480px) {
   .pdf-viewer_controls {
-    padding: 6px;
+    padding: 6px 8px;
   }
 
   .pdf-control-button {
     font-size: 12px;
+    min-width: 24px;
+    height: 24px;
+    padding: 2px 4px;
+
+    .control-icon {
+      font-size: 1em;
+    }
+
+    // 移动端隐藏按钮文字，只显示图标
+    .control-text {
+      display: none;
+    }
+  }
+
+  // 缩小页码信息的间距
+  .pdf-page-info,
+  .pdf-zoom-info {
+    font-size: 11px;
+    min-width: 24px;
   }
 }
